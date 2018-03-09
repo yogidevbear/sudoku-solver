@@ -16,6 +16,9 @@
   (fn [idx itm]
     (if (not (nil? itm))
       itm
+      (first (remove nil? (map #(if (some #{idx} %) %) (partition 9 (range 81)))))
+      ))
+  sudoku)
       ;[(int (/ idx 9)) (mod idx 9)]
       ;(map #(nth sudoku %) (map #(+ (mod idx 9) (* 9 %)) (range 9)));col values
       ;(map #(nth sudoku %) (map #(+ % (* 9 (int (/ idx 9)))) (range 9)));row values
