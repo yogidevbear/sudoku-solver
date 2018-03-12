@@ -1,17 +1,5 @@
 (ns sudoku.solver)
 
-(def sudoku
-  (let [_ nil]
-     [_ _ 6 _ 5 4 9 _ _
-      1 _ _ _ 6 _ _ 4 2
-      7 _ _ _ 8 9 _ _ _
-      _ 7 _ _ _ 5 _ 8 1
-      _ 5 _ 3 4 _ 6 _ _
-      4 _ 2 _ _ _ _ _ _
-      _ 3 4 _ _ _ 1 _ _
-      9 _ _ 8 _ _ _ 5 _
-      _ _ _ 4 _ _ 3 _ 7]))
-(map-indexed vector sudoku)
 (defn get-options-set
   "Takes an initial unsolved sudoku and returns a map with keys for each location
   with possible options to use"
@@ -39,11 +27,6 @@
                   (map #(nth sudoku %) (first (filter #(contains? (set %) idx) mini-grids))))))
             (set (range 1 10))))))
     sudoku))
-      ;[(int (/ idx 9)) (mod idx 9)]
-      ;(map #(nth sudoku %) (map #(+ (mod idx 9) (* 9 %)) (range 9)));col values
-      ;(map #(nth sudoku %) (map #(+ % (* 9 (int (/ idx 9)))) (range 9)));row values
-
-(get-options-set sudoku)
 
 (defn solve
   "Takes a sequence of numbers representing a possibly incomplete Sudoku puzzle
@@ -56,11 +39,28 @@
        every sub-grid contains the digits 1-9 exactly once.
 
    See the test for an example."
-
   [sudoku]
+  (let [options-set (get-options-set sudoku)
+        cleaned-options-set (map #(cond
+                                    (integer? %) %
+                                    (= 1 (count %)) (first %)
+                                    :else nil) options-set)]
+    (if (some #(nil? %) cleaned-options-set)
+      (recur cleaned-options-set)
+      cleaned-options-set)))
 
-  ; TODO: Implement this...
-  (let [grid (partition 9 sudoku)
-        options-set (get-options-set grid)]
-    (for ))
-  )
+(comment
+  ;Define an incomplete sudoku
+  (def sudoku
+    (let [_ nil]
+       [_ _ 6 _ 5 4 9 _ _
+        1 _ _ _ 6 _ _ 4 2
+        7 _ _ _ 8 9 _ _ _
+        _ 7 _ _ _ 5 _ 8 1
+        _ 5 _ 3 4 _ 6 _ _
+        4 _ 2 _ _ _ _ _ _
+        _ 3 4 _ _ _ 1 _ _
+        9 _ _ 8 _ _ _ 5 _
+        _ _ _ 4 _ _ 3 _ 7]))
+  ;Solve the incomplete sudoku
+  (solve sudoku))
